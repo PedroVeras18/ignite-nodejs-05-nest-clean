@@ -1,6 +1,6 @@
 import {
-  ConflictException,
   Body,
+  ConflictException,
   Controller,
   HttpCode,
   Post,
@@ -36,7 +36,9 @@ export class CreateAccountController {
     })
 
     if (userWithSameEmail) {
-      throw new ConflictException('User with same e-mail already exists.')
+      throw new ConflictException(
+        'User with same e-mail address already exists.',
+      )
     }
 
     const hashedPassword = await hash(password, 8)
