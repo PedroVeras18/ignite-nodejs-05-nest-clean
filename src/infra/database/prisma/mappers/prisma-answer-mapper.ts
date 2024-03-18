@@ -1,6 +1,7 @@
 import { Answer as PrismaAnswer, Prisma } from '@prisma/client'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Answer } from '@/domain/forum/enterprise/entities/answer'
+import { AnswerAttachment } from '@/domain/forum/enterprise/entities/answer-attachment'
 
 export class PrismaAnswerMapper {
   static toDomain(raw: PrismaAnswer): Answer {
@@ -14,6 +15,25 @@ export class PrismaAnswerMapper {
       },
       new UniqueEntityID(raw.id),
     )
+  }
+
+  static toPrismaUpdateMany(
+    attachments: AnswerAttachment[],
+  ): Prisma.AttachmentUpdateManyArgs {
+    const attachmentIds = attachments.map((attachment) => {
+      return attachment.attachmentId.toString()
+    })
+
+    return {
+      where: {
+        id: {
+          in: attachmentIds,
+        },
+      },
+      data: {
+        answerId: attachments[0].answerId.toString(),
+      },
+    }
   }
 
   static toPersistence(answer: Answer): Prisma.AnswerUncheckedCreateInput {
